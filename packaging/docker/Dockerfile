@@ -22,12 +22,13 @@ FROM ubuntu:18.04
 # Install dependencies
 
 RUN apt-get update && \
-	apt-get install -y curl less && \
+	apt-get install -y curl less \
+        dnsutils>=1:9.11.3+dfsg-1ubuntu1.7 && \
 	rm -r /var/lib/apt/lists/*
 
 # Install FoundationDB Document Layer Binaries
 
-ARG FDB_DOC_VERSION
+ARG FDB_DOC_VERSION=1.6.3
 ARG FDB_WEBSITE=https://www.foundationdb.org
 
 WORKDIR /var/fdb/tmp
@@ -43,7 +44,7 @@ WORKDIR /var/fdb
 # This Docker image is just packing 6.0 client libraries. Document Layer works with
 # any FoundationDB server >= 5.1.0. If your server version is not 6.0, then you might
 # have to add the correct version client library here.
-ARG FDB_CLIENT_VERSION=6.0.18
+ARG FDB_CLIENT_VERSION=6.1.8
 RUN curl $FDB_WEBSITE/downloads/$FDB_CLIENT_VERSION/linux/libfdb_c_$FDB_CLIENT_VERSION.so -o /usr/lib/libfdb_c.so && \
 	rm -rf /mnt/website
 

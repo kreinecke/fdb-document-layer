@@ -4,9 +4,25 @@ function setup_cluster_file() {
 	FDB_CLUSTER_FILE=${FDB_CLUSTER_FILE:-/etc/foundationdb/fdb.cluster}
 	mkdir -p $(dirname $FDB_CLUSTER_FILE)
 
-	if [[ -n "$FDB_CLUSTER_FILE_CONTENTS" ]]; then
-		echo "$FDB_CLUSTER_FILE_CONTENTS" > $FDB_CLUSTER_FILE
-    fi
+	if [[ -n $FDB_COORDINATOR ]]; then
+		echo "FDB coordinator: $FDB_COORDINATOR"
+		coordinator_ip=$(dig +short +search $FDB_COORDINATOR)
+		echo "Coordinator IP: $coordinator_ip"
+                if [[ -z "$coordinator_ip" ]]; then
+                        echo "Failed to look up coordinator address for $FDB_COORDINATOR" 1>&2
+                        exit 1
+                fi
+                coordinator_port=${FDB_COORDINATOR_PORT:-4500}
+		if [[ -z $CLUSTER_ID ]]; then
+			echo "CLUSTER_ID environment variable not defined" 1>&2
+                	exit 1
+		fi
+                echo "$CLUSTER_ID@$coordinator_ip:$coordinator_port" > $FDB_CLUSTER_FILE
+        else
+                echo "FDB_COORDINATOR environment variable not defined" 1>&2
+                exit 1
+        fi
+
 
     if [ ! -f ${FDB_CLUSTER_FILE} ]; then
         echo "Failed to locate cluster file at $FDB_CLUSTER_FILE" 1>&2
@@ -32,4 +48,7 @@ setup_public_ip
 setup_cluster_file
 
 echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT"
-fdbdoc --listen_address $PUBLIC_IP:$FDB_DOC_PORT --logdir /var/fdb/logs
+echo "Connecting to FDB server at: $CLUSTER_ID@$coordinator_ip:$coordinator_port"
+echo "Cluster file contents: "
+cat $FDB_CLUSTER_FILE
+fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT --logdir /var/fdb/logs

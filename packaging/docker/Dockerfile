@@ -27,7 +27,7 @@ RUN apt-get update && \
 
 # Install FoundationDB Document Layer Binaries
 
-ARG FDB_DOC_VERSION
+ARG FDB_DOC_VERSION=1.6.3
 ARG FDB_WEBSITE=https://www.foundationdb.org
 
 WORKDIR /var/fdb/tmp
@@ -49,6 +49,11 @@ RUN curl $FDB_WEBSITE/downloads/$FDB_CLIENT_VERSION/linux/libfdb_c_$FDB_CLIENT_V
 
 COPY fdbdoc.bash scripts/
 RUN chmod u+x scripts/*.bash && mkdir -p logs
+
+COPY testcerts/fdb.pem certs/
+COPY testcerts/ca.crt certs/
+COPY testcerts/server.key certs/
+COPY testcerts/server.crt certs/
 
 CMD /var/fdb/scripts/fdbdoc.bash
 

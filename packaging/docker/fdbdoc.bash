@@ -47,8 +47,13 @@ function setup_public_ip() {
 setup_public_ip
 setup_cluster_file
 
-echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT"
 echo "Connecting to FDB server at: $CLUSTER_ID@$coordinator_ip:$coordinator_port"
 echo "Cluster file contents: "
 cat $FDB_CLUSTER_FILE
-fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT --logdir /var/fdb/logs
+if [[ "$ENABLE_TLS" == true ]]; then
+	echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT:tls. TLS enabled."
+	fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT:tls --tls_certificate_file /etc/secrets/server.crt --tls_ca_file /etc/secrets/ca.crt --tls_key_file /etc/secrets/server.key --logdir /var/fdb/logs
+else
+	echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT. No TLS."
+	fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT --logdir /var/fdb/logs
+fi

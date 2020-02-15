@@ -50,11 +50,6 @@ RUN curl $FDB_WEBSITE/downloads/$FDB_CLIENT_VERSION/linux/libfdb_c_$FDB_CLIENT_V
 COPY fdbdoc.bash scripts/
 RUN chmod u+x scripts/*.bash && mkdir -p logs
 
-COPY testcerts/fdb.pem certs/
-COPY testcerts/ca.crt certs/
-COPY testcerts/server.key certs/
-COPY testcerts/server.crt certs/
-
 CMD /var/fdb/scripts/fdbdoc.bash
 
 # Runtime Configuration Options

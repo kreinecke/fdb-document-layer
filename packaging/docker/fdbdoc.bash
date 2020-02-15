@@ -31,5 +31,5 @@ function setup_public_ip() {
 setup_public_ip
 setup_cluster_file
 
-echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT"
-fdbdoc --listen_address $PUBLIC_IP:$FDB_DOC_PORT:tls --tls_certificate_file /etc/secrets/server.crt --tls_ca_file /etc/secrets/ca.crt --tls_key_file /etc/secrets/server.key --tls_password 1234 --logdir /var/fdb/logs
+echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT:tls"
+fdbdoc --listen_address $PUBLIC_IP:$FDB_DOC_PORT:tls --tls_certificate_file /etc/secrets/server.crt --tls_ca_file /etc/secrets/ca.crt --tls_key_file /etc/secrets/server.key --logdir /var/fdb/logs

@@ -50,9 +50,9 @@ setup_cluster_file
 echo "Connecting to FDB server at: $CLUSTER_ID@$coordinator_ip:$coordinator_port"
 echo "Cluster file contents: "
 cat $FDB_CLUSTER_FILE
-if [[ "$ENABLE_TLS" == true ]]; then
+if [[ "$ENABLE_TLS" == "true" ]]; then
 	echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT:tls. TLS enabled."
-	fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT:tls --tls_certificate_file /etc/secrets/server.crt --tls_ca_file /etc/secrets/ca.crt --tls_key_file /etc/secrets/server.key --logdir /var/fdb/logs
+	fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT:tls --tls_certificate_file $SERVER_CRT --tls_ca_file $CA_CRT --tls_key_file $SERVER_KEY --logdir /var/fdb/logs
 else
 	echo "Starting FDB Document Layer on $PUBLIC_IP:$FDB_DOC_PORT. No TLS."
 	fdbdoc -V --listen_address $PUBLIC_IP:$FDB_DOC_PORT --logdir /var/fdb/logs
